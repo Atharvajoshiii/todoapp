@@ -21,11 +21,12 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
-
+apply plugin: 'com.google.gms.google-services'
 android {
     namespace "com.example.todoapp"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
+    // minSdkVersion 21
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
