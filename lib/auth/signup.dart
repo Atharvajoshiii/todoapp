@@ -1,17 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:todoapp/UI/homepage.dart';
 import 'package:todoapp/Utils/utils.dart';
-import 'package:todoapp/auth/signup.dart';
+import 'package:todoapp/auth/login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  LoginScreen({Key? key}) : super(key: key);
+class SignUp extends StatefulWidget {
+  const SignUp({Key? key}) : super(key: key);
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<SignUp> createState() => _SignUpState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpState extends State<SignUp> {
   final LinearGradient gradient = LinearGradient(
     colors: [Colors.blue, Colors.green],
     begin: Alignment.topLeft,
@@ -21,34 +20,15 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _formField = GlobalKey<FormState>();
-  FirebaseAuth _auth = FirebaseAuth.instance;
   bool loading = false;
 
-  void login() {
-    setState(() {
-      loading = true;
-    });
-    _auth
-        .signInWithEmailAndPassword(
-      email: emailController.text,
-      password: passwordController.text,
-    )
-        .then((value) {
-      setState(() {
-        loading = false;
-      });
-      //Utils().toastMessege("User logged in successfully");
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
-      );
-    }).catchError((error) {
-      debugPrint(error.toString());
-      Utils().toastMessege(error.toString());
-      setState(() {
-        loading = false;
-      });
-    });
+  FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -78,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Hi, Welcome Back! 👋",
+                          "Hi👋 Glad to See You here",
                           style: TextStyle(
                             fontSize: 25,
                             fontWeight: FontWeight.bold,
@@ -88,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     SizedBox(height: 5),
                     Text(
-                      "We are happy to see you. Login to your account",
+                      "We are happy to see you. Sign up for your account",
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
@@ -112,9 +92,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             SizedBox(height: 10),
                             TextFormField(
+                              style: TextStyle(color: Colors.white),
                               keyboardType: TextInputType.emailAddress,
                               controller: emailController,
-                              style: TextStyle(color: Colors.white), // Text color
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: Colors.black,
@@ -124,6 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
+                                 
                               ),
                               validator: (value) {
                                 if (value!.isEmpty) {
@@ -142,10 +123,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             SizedBox(height: 10),
                             TextFormField(
+                              style: TextStyle(color: Colors.white),
                               obscureText: true,
-                              keyboardType: TextInputType.visiblePassword,
+                              keyboardType: TextInputType.text,
                               controller: passwordController,
-                              style: TextStyle(color: Colors.white), // Text color
                               decoration: InputDecoration(
                                 hintText: 'Enter your password',
                                 border: OutlineInputBorder(
@@ -160,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 if (value!.isEmpty) {
                                   return 'Enter password';
                                 } else if (value.length < 6) {
-                                  return 'Enter password greater than six characters';
+                                  return 'Write password more than six characters';
                                 }
                                 return null;
                               },
@@ -171,7 +152,26 @@ class _LoginScreenState extends State<LoginScreen> {
                                 InkWell(
                                   onTap: () {
                                     if (_formField.currentState!.validate()) {
-                                      login();
+                                      setState(() {
+                                        loading = true;
+                                      });
+                                      _auth
+                                          .createUserWithEmailAndPassword(
+                                            email: emailController.text,
+                                            password: passwordController.text,
+                                          )
+                                          .then((value) {
+                                            setState(() {
+                                              loading = false;
+                                            });
+                                            // You can navigate to another screen here on successful signup
+                                          })
+                                          .catchError((error) {
+                                            Utils().toastMessege(error.toString());
+                                            setState(() {
+                                              loading = false;
+                                            });
+                                          });
                                     }
                                   },
                                   child: Container(
@@ -179,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     width: 350,
                                     child: Center(
                                       child: Text(
-                                        "Login",
+                                        "Sign up",
                                         style: TextStyle(color: Colors.yellow),
                                       ),
                                     ),
@@ -209,7 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => SignUp()),
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
                 );
               },
               child: Container(
@@ -217,7 +217,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: 200,
                 child: Center(
                   child: Text(
-                    "Sign up",
+                    "Login",
                     style: TextStyle(color: Colors.black),
                   ),
                 ),
