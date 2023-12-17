@@ -161,6 +161,7 @@ class _SignUpState extends State<SignUp> {
                                             password: passwordController.text,
                                           )
                                           .then((value) {
+                                            Navigator.push(context,MaterialPageRoute(builder: (context)=>LoginScreen()));
                                             setState(() {
                                               loading = false;
                                             });
@@ -233,3 +234,4 @@ class _SignUpState extends State<SignUp> {
     );
   }
 }
+
